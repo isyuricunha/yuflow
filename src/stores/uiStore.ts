@@ -12,6 +12,9 @@ export const useUIStore = create<UIStore>()(
         selectedTasks: new Set<number>(),
         bulkMode: false,
         sortBy: null,
+        viewMode: 'list',
+        searchQuery: '',
+        activeFilters: {},
 
         setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
         setDarkMode: (dark: boolean) => set({ darkMode: dark }),
@@ -32,6 +35,11 @@ export const useUIStore = create<UIStore>()(
           selectedTasks: enabled ? state.selectedTasks : new Set<number>()
         })),
         setSortBy: (sortBy: UIStore['sortBy']) => set({ sortBy }),
+        setViewMode: (viewMode: UIStore['viewMode']) => set({ viewMode }),
+        setSearchQuery: (searchQuery: string) => set({ searchQuery }),
+        setActiveFilters: (filters: Partial<UIStore['activeFilters']>) => set(state => ({
+          activeFilters: { ...state.activeFilters, ...filters }
+        })),
       }),
       {
         name: 'ui-store',

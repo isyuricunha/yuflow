@@ -11,7 +11,7 @@ interface SortMenuProps {
 
 export const SortMenu: React.FC<SortMenuProps> = ({ isOpen, onClose }) => {
   const { sortBy, setSortBy } = useUIStore();
-  const { sortTasksByPriority, sortTasksByDueDate, sortTasksByCreated } = useTaskStore();
+  const { sortTasksByPriority, sortTasksByDueDate, sortTasksByCreated, sortTasksAlphabetically } = useTaskStore();
 
   const sortOptions = [
     {
@@ -31,6 +31,12 @@ export const SortMenu: React.FC<SortMenuProps> = ({ isOpen, onClose }) => {
       label: 'Created Date',
       icon: Clock,
       action: sortTasksByCreated,
+    },
+    {
+      key: 'alphabetical' as const,
+      label: 'Alphabetical',
+      icon: ArrowUpDown,
+      action: sortTasksAlphabetically,
     },
   ];
 

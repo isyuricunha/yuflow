@@ -151,6 +151,16 @@ export interface UIStore {
   selectAllTasks: (taskIds: number[]) => void;
   clearSelection: () => void;
   setBulkMode: (enabled: boolean) => void;
-  sortBy: 'priority' | 'dueDate' | 'created' | null;
-  setSortBy: (sortBy: 'priority' | 'dueDate' | 'created' | null) => void;
+  
+  // Sorting and View
+  sortBy: 'priority' | 'dueDate' | 'created' | 'alphabetical' | null;
+  setSortBy: (sortBy: 'priority' | 'dueDate' | 'created' | 'alphabetical' | null) => void;
+  viewMode: 'list' | 'grid' | 'compact';
+  setViewMode: (viewMode: 'list' | 'grid' | 'compact') => void;
+  
+  // Search and Filters
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  activeFilters: TaskFilters;
+  setActiveFilters: (filters: Partial<TaskFilters>) => void;
 }

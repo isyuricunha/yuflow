@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Menu, X, Plus, Search, Filter, Settings, Home, Calendar, CheckSquare, Tag } from 'lucide-react';
 import { useUIStore } from '../../stores';
 import { Button, Input } from '../ui';
-import { CategoryManager, SortMenu, SettingsModal } from '../features';
+import { CategoryManager, SortMenu, SettingsModal, SearchBar, AdvancedFilters, ViewModeSelector } from '../features';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   return (
     <div className="h-screen bg-black text-white flex overflow-hidden">
@@ -89,16 +89,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
             </div>
             
             <div className="flex items-center space-x-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
-                <input
-                  type="text"
-                  placeholder="Search tasks..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange/80"
-                />
-              </div>
+              <SearchBar className="w-64" />
+              
+              <ViewModeSelector />
+              
               <Button 
                 variant="ghost" 
                 size="sm"
@@ -106,6 +100,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
               >
                 <CheckSquare className="h-4 w-4" />
               </Button>
+              
               <div className="relative">
                 <Button 
                   variant="ghost" 
@@ -119,6 +114,21 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
                   onClose={() => setShowSortMenu(false)} 
                 />
               </div>
+              
+              <div className="relative">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+                <AdvancedFilters 
+                  isOpen={showAdvancedFilters} 
+                  onClose={() => setShowAdvancedFilters(false)} 
+                />
+              </div>
+              
               <Button 
                 variant="ghost" 
                 size="sm"
