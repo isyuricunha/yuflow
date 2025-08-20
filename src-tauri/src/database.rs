@@ -269,18 +269,42 @@ impl Database {
         Ok(row.map(|r| r.get("value")))
     }
 
-    pub async fn set_setting(&self, key: &str, value: &str) -> Result<(), sqlx::Error> {
-        let now = chrono::Utc::now().to_rfc3339();
-        
-        sqlx::query(
-            "INSERT OR REPLACE INTO app_settings (key, value, updated_at) VALUES (?, ?, ?)"
-        )
-        .bind(key)
-        .bind(value)
-        .bind(&now)
-        .execute(&self.pool)
-        .await?;
-        
-        Ok(())
-    }
+pub async fn set_setting(&self, key: &str, value: &str) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        "INSERT OR REPLACE INTO app_settings (key, value, updated_at) VALUES (?, ?, ?)",
+        key,
+        value,
+        chrono::Utc::now().to_rfc3339()
+    )
+    .execute(&self.pool)
+    .await?;
+    
+    Ok(())
+}
+
+pub async fn get_all_settings(&self) -> Result<Vec<AppSetting>, sqlx::Error> {
+    let rows = sqlx::query!(
+        "SELECT key, value, updated_at FROM app_settings ORDER BY key"
+    )
+    .fetch_all(&self.pool)
+    .await?;
+
+    Ok(rows.into_iter().map(|row| AppSetting {
+        key: row.key,
+        value: row.value,
+        updated_at: row.updated_at,
+    }).collect())
+}
+
+pub async fn clear_all_data(&self) -> Result<(), sqlx::Error> {
+    let mut tx = self.pool.begin().await?;
+    
+    // Delete in correct order due to foreign key constraints
+    sqlx::query!("DELETE FROM task_tags").execute(&mut *tx).await?;
+    sqlx::query!("DELETE FROM tasks").execute(&mut *tx).await?;
+    sqlx::query!("DELETE FROM categories WHERE name != 'General'").execute(&mut *tx).await?;
+    sqlx::query!("DELETE FROM app_settings").execute(&mut *tx).await?;
+    
+    tx.commit().await?;
+    Ok(())
 }

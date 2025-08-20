@@ -2,6 +2,8 @@ use tauri::State;
 use std::sync::Mutex;
 use crate::database::Database;
 use crate::models::*;
+use crate::backup::{BackupManager, BackupMetadata};
+use validator::Validate;
 
 type DatabaseState = State<'_, Mutex<Option<Database>>>;
 
@@ -55,6 +57,10 @@ pub async fn create_task(
     task: CreateTaskInput,
     db_state: DatabaseState,
 ) -> Result<Task, String> {
+    // Validate input
+    task.validate()
+        .map_err(|e| format!("Validation error: {}", e))?;
+    
     let db_guard = db_state.lock().unwrap();
     let db = db_guard
         .as_ref()
@@ -114,6 +120,10 @@ pub async fn create_category(
     category: CreateCategoryInput,
     db_state: DatabaseState,
 ) -> Result<Category, String> {
+    // Validate input
+    category.validate()
+        .map_err(|e| format!("Validation error: {}", e))?;
+    
     let db_guard = db_state.lock().unwrap();
     let db = db_guard
         .as_ref()
@@ -168,4 +178,65 @@ pub async fn set_setting(
     db.set_setting(&key, &value)
         .await
         .map_err(|e| format!("Failed to set setting: {}", e))
+}
+
+// Backup commands
+#[tauri::command]
+pub async fn create_backup(
+    app_handle: tauri::AppHandle,
+    db_state: DatabaseState,
+) -> Result<BackupMetadata, String> {
+    let db_guard = db_state.lock().unwrap();
+    let db = db_guard
+        .as_ref()
+        .ok_or("Database not initialized")?;
+    
+    let backup_manager = BackupManager::new(&app_handle)
+        .map_err(|e| format!("Failed to initialize backup manager: {}", e))?;
+    
+    backup_manager.create_backup(db)
+        .await
+        .map_err(|e| format!("Failed to create backup: {}", e))
+}
+
+#[tauri::command]
+pub async fn restore_backup(
+    app_handle: tauri::AppHandle,
+    filename: String,
+    db_state: DatabaseState,
+) -> Result<(), String> {
+    let db_guard = db_state.lock().unwrap();
+    let db = db_guard
+        .as_ref()
+        .ok_or("Database not initialized")?;
+    
+    let backup_manager = BackupManager::new(&app_handle)
+        .map_err(|e| format!("Failed to initialize backup manager: {}", e))?;
+    
+    backup_manager.restore_backup(&filename, db)
+        .await
+        .map_err(|e| format!("Failed to restore backup: {}", e))
+}
+
+#[tauri::command]
+pub async fn list_backups(
+    app_handle: tauri::AppHandle,
+) -> Result<Vec<BackupMetadata>, String> {
+    let backup_manager = BackupManager::new(&app_handle)
+        .map_err(|e| format!("Failed to initialize backup manager: {}", e))?;
+    
+    backup_manager.list_backups()
+        .map_err(|e| format!("Failed to list backups: {}", e))
+}
+
+#[tauri::command]
+pub async fn delete_backup(
+    app_handle: tauri::AppHandle,
+    filename: String,
+) -> Result<(), String> {
+    let backup_manager = BackupManager::new(&app_handle)
+        .map_err(|e| format!("Failed to initialize backup manager: {}", e))?;
+    
+    backup_manager.delete_backup(&filename)
+        .map_err(|e| format!("Failed to delete backup: {}", e))
 }

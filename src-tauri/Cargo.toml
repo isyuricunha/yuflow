@@ -26,4 +26,10 @@ serde_json = "1"
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "sqlite"] }
 tokio = { version = "1", features = ["full"] }
 chrono = { version = "0.4", features = ["serde"] }
+validator = { version = "0.16", features = ["derive"] }
+thiserror = "1.0"
+
+[dev-dependencies]
+tempfile = "3.8"
+tokio-test = "0.4"
 

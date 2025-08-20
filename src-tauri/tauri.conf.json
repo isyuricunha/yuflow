@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "yuflow",
+  "productName": "Yuflow",
   "version": "0.1.0",
-  "identifier": "com.yc.yuflow",
+  "identifier": "com.yuflow.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -12,24 +12,45 @@
   "app": {
     "windows": [
       {
-        "title": "yuflow",
-        "width": 800,
-        "height": 600
+        "title": "Yuflow - Private Task Manager",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "maximized": false,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "skipTaskbar": false,
+        "theme": "Dark"
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; script-src 'self'; connect-src 'none';"
+    },
+    "trayIcon": {
+      "iconPath": "icons/favicon-32x32.png",
+      "iconAsTemplate": true
     }
   },
   "bundle": {
     "active": true,
     "targets": "all",
     "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
+      "icons/favicon-32x32.png",
+      "icons/android-chrome-192x192.png",
+      "icons/android-chrome-512x512.png",
+      "icons/apple-touch-icon.png",
+      "icons/favicon.ico"
+    ],
+    "copyright": "Copyright © 2025 Yuflow. All rights reserved.",
+    "category": "Productivity",
+    "shortDescription": "Privacy-first task manager",
+    "longDescription": "A minimalist, privacy-first task manager that keeps all your data local. No cloud sync, no tracking, just pure productivity."
+  },
+  "plugins": {
+    "sql": {
+      "preload": ["sqlite:yuflow.db"]
+    }
   }
 }

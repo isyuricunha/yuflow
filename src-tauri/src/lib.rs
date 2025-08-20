@@ -1,6 +1,10 @@
-mod models;
-mod database;
 mod commands;
+mod database;
+mod models;
+mod backup;
+
+#[cfg(test)]
+mod tests;
 
 use std::sync::Mutex;
 use commands::*;
@@ -21,7 +25,11 @@ pub fn run() {
             create_category,
             delete_category,
             get_setting,
-            set_setting
+            set_setting,
+            create_backup,
+            restore_backup,
+            list_backups,
+            delete_backup
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
