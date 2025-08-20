@@ -50,7 +50,9 @@
   },
   "plugins": {
     "sql": {
-      "preload": ["sqlite:yuflow.db"]
+      "preload": [
+        "sqlite:yuflow.db"
+      ]
     }
   }
 }
