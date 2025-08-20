@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from '../ui';
 import { useTaskStore } from '../../stores';
-import { CreateTaskInput, Priority } from '../../types';
+import { CreateTaskInput } from '../../types';
 
 interface CreateTaskModalProps {
   isOpen: boolean;

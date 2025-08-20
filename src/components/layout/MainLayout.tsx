@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Plus, Search, Filter, Settings, Home, Calendar, CheckSquare, Tag } from 'lucide-react';
+import { Menu, X, Plus, Filter, Settings, CheckSquare, Tag } from 'lucide-react';
 import { useUIStore } from '../../stores';
-import { Button, Input } from '../ui';
+import { Button } from '../ui';
 import { CategoryManager, SortMenu, SettingsModal, SearchBar, AdvancedFilters, ViewModeSelector } from '../features';
 
 interface MainLayoutProps {

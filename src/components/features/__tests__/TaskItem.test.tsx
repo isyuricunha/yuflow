@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { TaskItem } from '../TaskItem';
 import { useTaskStore } from '../../../stores/taskStore';
 import type { Task } from '../../../types';
@@ -91,11 +92,11 @@ describe('TaskItem Component', () => {
     const { rerender } = render(<TaskItem task={mockTask} />);
     expect(screen.getByText('HIGH')).toHaveClass('bg-red-600');
 
-    const mediumTask = { ...mockTask, priority: 'medium' };
+    const mediumTask = { ...mockTask, priority: 'medium' as const };
     rerender(<TaskItem task={mediumTask} />);
     expect(screen.getByText('MEDIUM')).toHaveClass('bg-yellow-600');
 
-    const lowTask = { ...mockTask, priority: 'low' };
+    const lowTask = { ...mockTask, priority: 'low' as const };
     rerender(<TaskItem task={lowTask} />);
     expect(screen.getByText('LOW')).toHaveClass('bg-green-600');
   });
@@ -106,7 +107,7 @@ describe('TaskItem Component', () => {
   });
 
   it('handles task without description', () => {
-    const taskWithoutDesc = { ...mockTask, description: null };
+    const taskWithoutDesc = { ...mockTask, description: undefined };
     render(<TaskItem task={taskWithoutDesc} />);
     
     expect(screen.getByText('Test Task')).toBeInTheDocument();

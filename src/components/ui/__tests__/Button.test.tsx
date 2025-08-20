@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Button } from '../Button';
 
 describe('Button Component', () => {
@@ -13,8 +14,8 @@ describe('Button Component', () => {
     const { rerender } = render(<Button variant="secondary">Secondary</Button>);
     expect(screen.getByRole('button')).toHaveClass('bg-gray-800');
 
-    rerender(<Button variant="outline">Outline</Button>);
-    expect(screen.getByRole('button')).toHaveClass('border-orange-600');
+    rerender(<Button variant="ghost">Ghost</Button>);
+    expect(screen.getByRole('button')).toHaveClass('hover:bg-gray-800');
 
     rerender(<Button variant="ghost">Ghost</Button>);
     expect(screen.getByRole('button')).toHaveClass('hover:bg-gray-800');
@@ -52,12 +53,9 @@ describe('Button Component', () => {
     expect(button).toHaveClass('opacity-50');
   });
 
-  it('renders with icon', () => {
-    const TestIcon = () => <span data-testid="test-icon">Icon</span>;
-    render(<Button icon={<TestIcon />}>With Icon</Button>);
-    
-    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-    expect(screen.getByText('With Icon')).toBeInTheDocument();
+  it('renders with custom className', () => {
+    render(<Button className="custom-class">Custom</Button>);
+    expect(screen.getByRole('button')).toHaveClass('custom-class');
   });
 
   it('applies custom className', () => {

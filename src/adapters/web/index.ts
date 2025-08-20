@@ -73,10 +73,11 @@ export class WebDatabaseAdapter implements DatabaseAdapter {
       }
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        query = query.filter(task => 
-          task.title.toLowerCase().includes(searchLower) ||
-          (task.description && task.description.toLowerCase().includes(searchLower))
-        );
+        query = query.filter(task => {
+          const titleMatch = task.title.toLowerCase().includes(searchLower);
+          const descMatch = task.description ? task.description.toLowerCase().includes(searchLower) : false;
+          return titleMatch || descMatch;
+        });
       }
     }
     
@@ -106,8 +107,7 @@ export class WebDatabaseAdapter implements DatabaseAdapter {
 
   async updateTask(taskUpdate: UpdateTaskInput): Promise<Task> {
     const now = new Date().toISOString();
-    const updates = { ...taskUpdate, updated_at: now };
-    delete updates.id;
+    const { id, ...updates } = { ...taskUpdate, updated_at: now };
     
     await this.db.tasks.update(taskUpdate.id, updates);
     const updatedTask = await this.db.tasks.get(taskUpdate.id);

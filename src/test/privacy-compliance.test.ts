@@ -19,12 +19,7 @@ describe('Privacy Compliance Tests', () => {
 
   it('should not access external APIs', () => {
     // Check that no external API endpoints are hardcoded
-    const codeFiles = [
-      '../services/database/index.ts',
-      '../adapters/desktop/index.ts',
-      '../adapters/web/index.ts',
-      '../stores/taskStore.ts',
-    ];
+    // In a real implementation, you would scan the actual file contents
 
     // This test ensures no external URLs are present in our code
     // In a real implementation, you would scan the actual file contents
@@ -33,7 +28,7 @@ describe('Privacy Compliance Tests', () => {
 
   it('should store data locally only', async () => {
     // Test that data is only stored locally
-    const { useTaskStore } = await import('../stores/taskStore');
+    // Import is available but not used in this test
     
     // Mock localStorage to verify local storage usage
     const localStorageMock = {
@@ -85,10 +80,7 @@ describe('Privacy Compliance Tests', () => {
     console.log = consoleSpy;
 
     // Test that sensitive data is not logged
-    const sensitiveData = {
-      title: 'Secret Task',
-      description: 'Confidential information',
-    };
+    // Simulate app operations that might log data
 
     // Simulate app operations that might log data
     console.log('App initialized');

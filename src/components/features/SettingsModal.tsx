@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Settings, Moon, Sun, Database, Shield, Info } from 'lucide-react';
 import { useUIStore } from '../../stores';
 import { Modal, Button } from '../ui';

@@ -66,7 +66,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
       await updateTask({
         id: task.id,
         title: editTitle.trim(),
-        description: editDescription.trim() || null,
+        description: editDescription.trim() || undefined,
       });
       setIsEditing(false);
     }

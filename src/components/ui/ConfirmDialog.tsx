@@ -91,7 +91,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
               {/* Actions */}
               <div className="flex items-center justify-end space-x-3">
-                <Button variant="outline" onClick={onClose}>
+                <Button variant="secondary" onClick={onClose}>
                   {cancelText}
                 </Button>
                 <Button

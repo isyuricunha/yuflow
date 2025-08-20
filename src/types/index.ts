@@ -134,6 +134,14 @@ export interface TaskStore {
   setFilters: (filters: Partial<TaskFilters>) => void;
   clearFilters: () => void;
   
+  // Search and sorting
+  searchTasks: (query: string) => Promise<void>;
+  sortTasksByPriority: () => void;
+  sortTasksByDueDate: () => void;
+  sortTasksByCreated: () => void;
+  sortTasksAlphabetically: () => void;
+  applyAdvancedFilters: (filters: TaskFilters) => void;
+  
   setError: (error: string | null) => void;
   setLoading: (loading: boolean) => void;
 }

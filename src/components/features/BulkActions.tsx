@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Trash2, X, Archive, Tag, Calendar } from 'lucide-react';
+import { Check, Trash2, X, Archive } from 'lucide-react';
 import { useTaskStore, useUIStore } from '../../stores';
 import { Button, ConfirmDialog } from '../ui';
 

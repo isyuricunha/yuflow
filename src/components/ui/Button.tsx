@@ -33,6 +33,16 @@ export const Button: React.FC<ButtonProps> = ({
     lg: 'px-6 py-3 text-base rounded-lg',
   };
 
+  const { 
+    onDrag, 
+    onDragEnd, 
+    onDragStart, 
+    onAnimationStart,
+    onAnimationEnd,
+    onAnimationIteration,
+    ...buttonProps 
+  } = props;
+
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
@@ -44,7 +54,7 @@ export const Button: React.FC<ButtonProps> = ({
         className
       )}
       disabled={disabled || loading}
-      {...props}
+      {...buttonProps}
     >
       {loading && (
         <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">

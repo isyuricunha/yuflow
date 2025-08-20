@@ -5,7 +5,7 @@ import type { Platform } from '../../types';
  */
 export function detectPlatform(): Platform {
   // Check if we're running in Tauri (desktop)
-  if (typeof window !== 'undefined' && window.__TAURI__) {
+  if (typeof window !== 'undefined' && (window as any).__TAURI__) {
     return 'desktop';
   }
   

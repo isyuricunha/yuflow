@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Clock, History } from 'lucide-react';
+import { Search, X, History } from 'lucide-react';
 import { useUIStore, useTaskStore } from '../../stores';
 import { Button } from '../ui';
 
