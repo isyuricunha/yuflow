@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
 use validator::{Validate, ValidationError};
 use thiserror::Error;
 

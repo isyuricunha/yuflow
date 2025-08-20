@@ -1,8 +1,8 @@
 use sqlx::{sqlite::SqlitePool, Row};
-use std::path::PathBuf;
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 use crate::models::*;
 
+#[derive(Clone)]
 pub struct Database {
     pool: SqlitePool,
 }
@@ -130,43 +130,7 @@ impl Database {
     pub async fn update_task(&self, input: UpdateTaskInput) -> Result<Task, sqlx::Error> {
         let now = chrono::Utc::now().to_rfc3339();
         
-        // Build dynamic update query
-        let mut set_clauses = vec!["updated_at = ?".to_string()];
-        let mut values: Vec<Box<dyn sqlx::Encode<'_, sqlx::Sqlite> + Send + Sync>> = vec![Box::new(now.clone())];
-        
-        if let Some(title) = &input.title {
-            set_clauses.push("title = ?".to_string());
-            values.push(Box::new(title.clone()));
-        }
-        if let Some(description) = &input.description {
-            set_clauses.push("description = ?".to_string());
-            values.push(Box::new(description.clone()));
-        }
-        if let Some(completed) = input.completed {
-            set_clauses.push("completed = ?".to_string());
-            values.push(Box::new(completed as i32));
-        }
-        if let Some(priority) = &input.priority {
-            set_clauses.push("priority = ?".to_string());
-            values.push(Box::new(priority.clone()));
-        }
-        if let Some(category_id) = input.category_id {
-            set_clauses.push("category_id = ?".to_string());
-            values.push(Box::new(category_id));
-        }
-        if let Some(due_date) = &input.due_date {
-            set_clauses.push("due_date = ?".to_string());
-            values.push(Box::new(due_date.clone()));
-        }
-        
-        let query = format!("UPDATE tasks SET {} WHERE id = ?", set_clauses.join(", "));
-        
-        let mut query_builder = sqlx::query(&query);
-        for value in values {
-            // Note: This is a simplified approach. In practice, you'd need proper parameter binding
-        }
-        
-        // For now, let's use a simpler approach with individual fields
+        // Simpler approach with individual fields using COALESCE
         sqlx::query(
             "UPDATE tasks SET 
              title = COALESCE(?, title),
@@ -269,42 +233,43 @@ impl Database {
         Ok(row.map(|r| r.get("value")))
     }
 
-pub async fn set_setting(&self, key: &str, value: &str) -> Result<(), sqlx::Error> {
-    sqlx::query!(
-        "INSERT OR REPLACE INTO app_settings (key, value, updated_at) VALUES (?, ?, ?)",
-        key,
-        value,
-        chrono::Utc::now().to_rfc3339()
-    )
-    .execute(&self.pool)
-    .await?;
-    
-    Ok(())
-}
+    pub async fn set_setting(&self, key: &str, value: &str) -> Result<(), sqlx::Error> {
+        sqlx::query(
+            "INSERT OR REPLACE INTO app_settings (key, value, updated_at) VALUES (?, ?, ?)"
+        )
+        .bind(key)
+        .bind(value)
+        .bind(chrono::Utc::now().to_rfc3339())
+        .execute(&self.pool)
+        .await?;
+        
+        Ok(())
+    }
 
-pub async fn get_all_settings(&self) -> Result<Vec<AppSetting>, sqlx::Error> {
-    let rows = sqlx::query!(
-        "SELECT key, value, updated_at FROM app_settings ORDER BY key"
-    )
-    .fetch_all(&self.pool)
-    .await?;
+    pub async fn get_all_settings(&self) -> Result<Vec<AppSetting>, sqlx::Error> {
+        let rows = sqlx::query(
+            "SELECT key, value, updated_at FROM app_settings ORDER BY key"
+        )
+        .fetch_all(&self.pool)
+        .await?;
 
-    Ok(rows.into_iter().map(|row| AppSetting {
-        key: row.key,
-        value: row.value,
-        updated_at: row.updated_at,
-    }).collect())
-}
+        Ok(rows.into_iter().map(|row| AppSetting {
+            key: row.get("key"),
+            value: row.get("value"),
+            updated_at: row.get("updated_at"),
+        }).collect())
+    }
 
-pub async fn clear_all_data(&self) -> Result<(), sqlx::Error> {
-    let mut tx = self.pool.begin().await?;
-    
-    // Delete in correct order due to foreign key constraints
-    sqlx::query!("DELETE FROM task_tags").execute(&mut *tx).await?;
-    sqlx::query!("DELETE FROM tasks").execute(&mut *tx).await?;
-    sqlx::query!("DELETE FROM categories WHERE name != 'General'").execute(&mut *tx).await?;
-    sqlx::query!("DELETE FROM app_settings").execute(&mut *tx).await?;
-    
-    tx.commit().await?;
-    Ok(())
+    pub async fn clear_all_data(&self) -> Result<(), sqlx::Error> {
+        let mut tx = self.pool.begin().await?;
+        
+        // Delete in correct order due to foreign key constraints
+        sqlx::query("DELETE FROM task_tags").execute(&mut *tx).await?;
+        sqlx::query("DELETE FROM tasks").execute(&mut *tx).await?;
+        sqlx::query("DELETE FROM categories WHERE name != 'General'").execute(&mut *tx).await?;
+        sqlx::query("DELETE FROM app_settings").execute(&mut *tx).await?;
+        
+        tx.commit().await?;
+        Ok(())
+    }
 }

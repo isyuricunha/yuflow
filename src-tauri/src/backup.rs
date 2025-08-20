@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, Utc};
+use chrono::Utc;
+use tauri::Manager;
 use crate::models::*;
 use crate::database::Database;
 
@@ -100,7 +101,7 @@ impl BackupManager {
                 category_id: task.category_id,
                 due_date: task.due_date,
             };
-            let mut created_task = database.create_task(input).await?;
+            let created_task = database.create_task(input).await?;
             
             // Update completion status if needed
             if task.completed {
