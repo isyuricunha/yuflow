@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, Plus, Search, Filter } from 'lucide-react';
+import { Menu, X, Plus, Search, Filter, Settings, Home, Calendar, CheckSquare, Tag } from 'lucide-react';
 import { useUIStore } from '../../stores';
-import { Button } from '../ui';
+import { Button, Input } from '../ui';
+import { CategoryManager, SortMenu, SettingsModal } from '../features';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -10,7 +11,11 @@ interface MainLayoutProps {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }) => {
-  const { sidebarOpen, toggleSidebar } = useUIStore();
+  const { sidebarOpen, setSidebarOpen, setBulkMode } = useUIStore();
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <div className="h-screen bg-black text-white flex overflow-hidden">
@@ -20,13 +25,22 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
         animate={{ width: sidebarOpen ? 280 : 0 }}
         className="bg-white/5 border-r border-white/10 flex-shrink-0 overflow-hidden"
       >
-        <div className="p-4 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="p-4 space-y-4 w-full">
+          <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold text-orange">Yuflow</h1>
-            <Button variant="ghost" size="sm" onClick={toggleSidebar}>
-              <Menu className="h-4 w-4" />
+            <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(false)}>
+              <X className="h-4 w-4" />
             </Button>
           </div>
+          
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            onClick={() => setShowCategoryManager(true)}
+          >
+            <Tag className="h-4 w-4 mr-3" />
+            Categories
+          </Button>
           
           <Button className="w-full" size="md" onClick={onCreateTask}>
             <Plus className="h-4 w-4 mr-2" />
@@ -67,7 +81,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {!sidebarOpen && (
-                <Button variant="ghost" size="sm" onClick={toggleSidebar}>
+                <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)}>
                   <Menu className="h-4 w-4" />
                 </Button>
               )}
@@ -80,11 +94,37 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
                 <input
                   type="text"
                   placeholder="Search tasks..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange/80"
                 />
               </div>
-              <Button variant="ghost" size="sm">
-                <Filter className="h-4 w-4" />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setBulkMode(true)}
+              >
+                <CheckSquare className="h-4 w-4" />
+              </Button>
+              <div className="relative">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowSortMenu(!showSortMenu)}
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+                <SortMenu 
+                  isOpen={showSortMenu} 
+                  onClose={() => setShowSortMenu(false)} 
+                />
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setShowSettings(true)}
+              >
+                <Settings className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -95,6 +135,18 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
           {children}
         </main>
       </div>
+
+      {/* Category Manager Modal */}
+      <CategoryManager
+        isOpen={showCategoryManager}
+        onClose={() => setShowCategoryManager(false)}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 };

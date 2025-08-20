@@ -68,7 +68,10 @@ export interface TaskFilters {
   completed?: boolean;
   priority?: Priority;
   category_id?: number;
+  due_date?: string;
   search?: string;
+  dateRange?: 'today' | 'week' | 'month' | 'all';
+  status?: 'all' | 'pending' | 'completed';
   due_date_before?: string;
   due_date_after?: string;
 }
@@ -138,9 +141,16 @@ export interface TaskStore {
 export interface UIStore {
   sidebarOpen: boolean;
   darkMode: boolean;
-  currentView: 'all' | 'today' | 'upcoming' | 'completed';
-  
-  toggleSidebar: () => void;
-  setCurrentView: (view: UIStore['currentView']) => void;
-  toggleDarkMode: () => void;
+  currentView: 'all' | 'today' | 'completed' | 'categories';
+  selectedTasks: Set<number>;
+  bulkMode: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  setDarkMode: (dark: boolean) => void;
+  setCurrentView: (view: 'all' | 'today' | 'completed' | 'categories') => void;
+  toggleTaskSelection: (taskId: number) => void;
+  selectAllTasks: (taskIds: number[]) => void;
+  clearSelection: () => void;
+  setBulkMode: (enabled: boolean) => void;
+  sortBy: 'priority' | 'dueDate' | 'created' | null;
+  setSortBy: (sortBy: 'priority' | 'dueDate' | 'created' | null) => void;
 }

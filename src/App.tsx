@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { MainLayout } from './components/layout/MainLayout';
-import { TaskList, CreateTaskModal } from './components/features';
+import { TaskList, CreateTaskModal, BulkActions } from './components/features';
 import { Button } from './components/ui';
 import { Plus } from 'lucide-react';
 import { isDesktop } from './services/platform';
@@ -40,6 +40,9 @@ function App() {
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
         />
+
+        {/* Bulk Actions */}
+        <BulkActions />
       </div>
     </MainLayout>
   );

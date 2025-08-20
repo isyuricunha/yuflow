@@ -180,6 +180,40 @@ export const useTaskStore = create<TaskStore>()(
         get().loadTasks();
       },
 
+      // Sorting operations
+      sortTasksByPriority: () => {
+        set(state => {
+          const priorityOrder = { high: 3, medium: 2, low: 1 };
+          const sortedTasks = [...state.tasks].sort((a, b) => {
+            const aPriority = priorityOrder[a.priority as keyof typeof priorityOrder] || 0;
+            const bPriority = priorityOrder[b.priority as keyof typeof priorityOrder] || 0;
+            return bPriority - aPriority; // High to low
+          });
+          return { tasks: sortedTasks };
+        });
+      },
+
+      sortTasksByDueDate: () => {
+        set(state => {
+          const sortedTasks = [...state.tasks].sort((a, b) => {
+            if (!a.due_date && !b.due_date) return 0;
+            if (!a.due_date) return 1;
+            if (!b.due_date) return -1;
+            return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+          });
+          return { tasks: sortedTasks };
+        });
+      },
+
+      sortTasksByCreated: () => {
+        set(state => {
+          const sortedTasks = [...state.tasks].sort((a, b) => {
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          });
+          return { tasks: sortedTasks };
+        });
+      },
+
       clearFilters: () => {
         set({ filters: {} });
         get().loadTasks();

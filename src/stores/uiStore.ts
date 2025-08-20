@@ -9,12 +9,29 @@ export const useUIStore = create<UIStore>()(
         sidebarOpen: true,
         darkMode: true, // Default to dark mode for True Pure Black theme
         currentView: 'all',
+        selectedTasks: new Set<number>(),
+        bulkMode: false,
+        sortBy: null,
 
-        toggleSidebar: () => set(state => ({ sidebarOpen: !state.sidebarOpen })),
-        
+        setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
+        setDarkMode: (dark: boolean) => set({ darkMode: dark }),
         setCurrentView: (view: UIStore['currentView']) => set({ currentView: view }),
-        
-        toggleDarkMode: () => set(state => ({ darkMode: !state.darkMode })),
+        toggleTaskSelection: (taskId: number) => set(state => {
+          const selectedTasks = new Set(state.selectedTasks);
+          if (selectedTasks.has(taskId)) {
+            selectedTasks.delete(taskId);
+          } else {
+            selectedTasks.add(taskId);
+          }
+          return { selectedTasks };
+        }),
+        selectAllTasks: (taskIds: number[]) => set({ selectedTasks: new Set(taskIds) }),
+        clearSelection: () => set({ selectedTasks: new Set() }),
+        setBulkMode: (enabled: boolean) => set(state => ({
+          bulkMode: enabled,
+          selectedTasks: enabled ? state.selectedTasks : new Set<number>()
+        })),
+        setSortBy: (sortBy: UIStore['sortBy']) => set({ sortBy }),
       }),
       {
         name: 'ui-store',
