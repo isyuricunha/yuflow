@@ -133,6 +133,7 @@ export interface TaskStore {
   
   setFilters: (filters: Partial<TaskFilters>) => void;
   clearFilters: () => void;
+  resetFilters: () => void;
   
   // Search and sorting
   searchTasks: (query: string) => Promise<void>;
@@ -149,12 +150,12 @@ export interface TaskStore {
 export interface UIStore {
   sidebarOpen: boolean;
   darkMode: boolean;
-  currentView: 'all' | 'today' | 'completed' | 'categories';
+  currentView: 'all' | 'today' | 'completed' | 'categories' | 'upcoming' | 'category';
   selectedTasks: Set<number>;
   bulkMode: boolean;
   setSidebarOpen: (open: boolean) => void;
   setDarkMode: (dark: boolean) => void;
-  setCurrentView: (view: 'all' | 'today' | 'completed' | 'categories') => void;
+  setCurrentView: (view: 'all' | 'today' | 'completed' | 'categories' | 'upcoming' | 'category') => void;
   toggleTaskSelection: (taskId: number) => void;
   selectAllTasks: (taskIds: number[]) => void;
   clearSelection: () => void;

@@ -11,12 +11,12 @@ interface MainLayoutProps {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }) => {
-  const { sidebarOpen, setSidebarOpen, setBulkMode, currentView, setCurrentView } = useUIStore();
-  const { categories, setFilters, clearFilters, resetFilters } = useTaskStore();
-  const [showCategoryManager, setShowCategoryManager] = useState(false);
-  const [showSortMenu, setShowSortMenu] = useState(false);
+  const { sidebarOpen, setSidebarOpen, setBulkMode } = useUIStore();
+  const { categories, setFilters, resetFilters } = useTaskStore();
+  const { currentView, setCurrentView } = useUIStore();
   const [showSettings, setShowSettings] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
 
   return (
     <div className="h-screen bg-black text-white flex overflow-hidden">
