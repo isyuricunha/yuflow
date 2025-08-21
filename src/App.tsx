@@ -4,7 +4,7 @@ import { MainLayout } from './components/layout/MainLayout';
 import { TaskList, CreateTaskModal, BulkActions } from './components/features';
 import { Button } from './components/ui';
 import { Plus } from 'lucide-react';
-import { isDesktop } from './services/platform';
+import { isDesktop } from './services/platform/index';
 import './styles/globals.css';
 
 function App() {

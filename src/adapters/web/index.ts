@@ -79,6 +79,32 @@ export class WebDatabaseAdapter implements DatabaseAdapter {
           return titleMatch || descMatch;
         });
       }
+      
+      // Date range filtering
+      if (filters.dateRange) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        query = query.filter(task => {
+          if (!task.due_date) return filters.dateRange === 'all';
+          const taskDate = new Date(task.due_date);
+          
+          switch (filters.dateRange) {
+            case 'today':
+              return taskDate >= today && taskDate < new Date(today.getTime() + 24 * 60 * 60 * 1000);
+            case 'week':
+              const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
+              const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+              return taskDate >= weekStart && taskDate < weekEnd;
+            case 'month':
+              const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+              const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+              return taskDate >= monthStart && taskDate < monthEnd;
+            default:
+              return true;
+          }
+        });
+      }
     }
     
     return await query.toArray();

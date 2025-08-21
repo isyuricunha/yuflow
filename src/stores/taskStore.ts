@@ -297,6 +297,12 @@ export const useTaskStore = create<TaskStore>()(
         set({ filters: {} });
         get().loadTasks();
       },
+
+      // Reset all filters and reload
+      resetFilters: () => {
+        set({ filters: {} });
+        get().loadTasks();
+      },
     }),
     {
       name: 'task-store',

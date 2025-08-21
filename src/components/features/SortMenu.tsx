@@ -7,9 +7,10 @@ import { Button } from '../ui';
 interface SortMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  inline?: boolean;
 }
 
-export const SortMenu: React.FC<SortMenuProps> = ({ isOpen, onClose }) => {
+export const SortMenu: React.FC<SortMenuProps> = ({ isOpen, onClose, inline = false }) => {
   const { sortBy, setSortBy } = useUIStore();
   const { sortTasksByPriority, sortTasksByDueDate, sortTasksByCreated, sortTasksAlphabetically } = useTaskStore();
 
@@ -43,13 +44,53 @@ export const SortMenu: React.FC<SortMenuProps> = ({ isOpen, onClose }) => {
   const handleSort = (option: typeof sortOptions[0]) => {
     setSortBy(option.key);
     option.action();
-    onClose();
+    if (!inline) onClose();
   };
 
   const clearSort = () => {
     setSortBy(null);
-    onClose();
+    if (!inline) onClose();
   };
+
+  if (inline) {
+    return (
+      <div className="space-y-1">
+        {sortOptions.map((option) => {
+          const IconComponent = option.icon;
+          const isActive = sortBy === option.key;
+          
+          return (
+            <button
+              key={option.key}
+              onClick={() => handleSort(option)}
+              className={`w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md hover:bg-white/10 transition-colors ${
+                isActive ? 'bg-orange/20 text-orange' : 'text-white'
+              }`}
+            >
+              <IconComponent className="h-4 w-4" />
+              <span>{option.label}</span>
+              {isActive && (
+                <ArrowUpDown className="h-3 w-3 ml-auto" />
+              )}
+            </button>
+          );
+        })}
+
+        {sortBy && (
+          <>
+            <div className="border-t border-white/10 my-2" />
+            <button
+              onClick={clearSort}
+              className="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md hover:bg-white/10 transition-colors text-white/70"
+            >
+              <X className="h-4 w-4" />
+              <span>Clear Sort</span>
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, Plus, Filter, Settings, CheckSquare, Tag } from 'lucide-react';
-import { useUIStore } from '../../stores';
+import { useUIStore, useTaskStore } from '../../stores';
 import { Button } from '../ui';
 import { CategoryManager, SortMenu, SettingsModal, SearchBar, AdvancedFilters, ViewModeSelector } from '../features';
 
@@ -11,7 +11,8 @@ interface MainLayoutProps {
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }) => {
-  const { sidebarOpen, setSidebarOpen, setBulkMode } = useUIStore();
+  const { sidebarOpen, setSidebarOpen, setBulkMode, currentView, setCurrentView } = useUIStore();
+  const { categories, setFilters, clearFilters, resetFilters } = useTaskStore();
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -48,27 +49,77 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
           </Button>
           
           <nav className="space-y-2">
-            <a href="#" className="block px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+            <button 
+              onClick={() => {
+                setCurrentView('all');
+                resetFilters();
+              }}
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors ${
+                currentView === 'all' ? 'bg-orange/20 text-orange' : ''
+              }`}
+            >
               All Tasks
-            </a>
-            <a href="#" className="block px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+            </button>
+            <button 
+              onClick={() => {
+                setCurrentView('today');
+                resetFilters();
+                setFilters({ dateRange: 'today' });
+              }}
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors ${
+                currentView === 'today' ? 'bg-orange/20 text-orange' : ''
+              }`}
+            >
               Today
-            </a>
-            <a href="#" className="block px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+            </button>
+            <button 
+              onClick={() => {
+                setCurrentView('upcoming');
+                resetFilters();
+                setFilters({ dateRange: 'week' });
+              }}
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors ${
+                currentView === 'upcoming' ? 'bg-orange/20 text-orange' : ''
+              }`}
+            >
               Upcoming
-            </a>
-            <a href="#" className="block px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+            </button>
+            <button 
+              onClick={() => {
+                setCurrentView('completed');
+                resetFilters();
+                setFilters({ completed: true });
+              }}
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors ${
+                currentView === 'completed' ? 'bg-orange/20 text-orange' : ''
+              }`}
+            >
               Completed
-            </a>
+            </button>
           </nav>
           
           <div className="border-t border-white/10 pt-4">
             <h3 className="text-sm font-medium text-white/70 mb-2">Categories</h3>
             <div className="space-y-1">
-              <div className="flex items-center px-3 py-1 rounded hover:bg-white/10 transition-colors">
-                <div className="w-3 h-3 rounded-full bg-orange mr-2"></div>
-                <span className="text-sm">General</span>
-              </div>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setCurrentView('category');
+                    resetFilters();
+                    setFilters({ category_id: category.id });
+                  }}
+                  className={`w-full flex items-center px-3 py-1 rounded hover:bg-white/10 transition-colors ${
+                    currentView === 'category' ? 'bg-orange/20' : ''
+                  }`}
+                >
+                  <div 
+                    className="w-3 h-3 rounded-full mr-2" 
+                    style={{ backgroundColor: category.color }}
+                  ></div>
+                  <span className="text-sm">{category.name}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -105,28 +156,48 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, onCreateTask }
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => setShowSortMenu(!showSortMenu)}
-                >
-                  <Filter className="h-4 w-4" />
-                </Button>
-                <SortMenu 
-                  isOpen={showSortMenu} 
-                  onClose={() => setShowSortMenu(false)} 
-                />
-              </div>
-              
-              <div className="relative">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
                   onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                  title="Filters & Sort"
                 >
                   <Filter className="h-4 w-4" />
                 </Button>
-                <AdvancedFilters 
-                  isOpen={showAdvancedFilters} 
-                  onClose={() => setShowAdvancedFilters(false)} 
-                />
+                {showAdvancedFilters && (
+                  <div className="absolute top-full right-0 mt-1 bg-gray-900 border border-white/10 rounded-lg shadow-lg z-20 min-w-[280px]">
+                    <div className="p-4 space-y-4">
+                      <h3 className="text-sm font-medium text-white mb-3">Filters & Sort</h3>
+                      
+                      {/* Sort Options */}
+                      <div>
+                        <label className="block text-xs font-medium text-white/70 mb-2">Sort By</label>
+                        <SortMenu 
+                          isOpen={true} 
+                          onClose={() => {}} 
+                          inline={true}
+                        />
+                      </div>
+                      
+                      {/* Advanced Filters */}
+                      <div>
+                        <label className="block text-xs font-medium text-white/70 mb-2">Advanced Filters</label>
+                        <AdvancedFilters 
+                          isOpen={true} 
+                          onClose={() => {}} 
+                          inline={true}
+                        />
+                      </div>
+                      
+                      <div className="flex justify-end pt-2 border-t border-white/10">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => setShowAdvancedFilters(false)}
+                        >
+                          Close
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               
               <Button 

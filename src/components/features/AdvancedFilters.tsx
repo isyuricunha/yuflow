@@ -8,9 +8,10 @@ import { TaskFilters, Priority } from '../../types';
 interface AdvancedFiltersProps {
   isOpen: boolean;
   onClose: () => void;
+  inline?: boolean;
 }
 
-export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ isOpen, onClose }) => {
+export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ isOpen, onClose, inline = false }) => {
   const { activeFilters, setActiveFilters } = useUIStore();
   const { categories, applyAdvancedFilters, loadTasks } = useTaskStore();
   const [localFilters, setLocalFilters] = useState<TaskFilters>(activeFilters);
@@ -48,7 +49,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ isOpen, onClos
   const applyFilters = () => {
     setActiveFilters(localFilters);
     applyAdvancedFilters(localFilters);
-    onClose();
+    if (!inline) onClose();
   };
 
   const clearAllFilters = () => {
@@ -56,7 +57,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({ isOpen, onClos
     setLocalFilters(emptyFilters);
     setActiveFilters(emptyFilters);
     loadTasks();
-    onClose();
+    if (!inline) onClose();
   };
 
   const getActiveFilterCount = () => {
