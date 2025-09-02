@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     expanded: {
       width: 280,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         damping: 25,
         stiffness: 300,
         duration: 0.4
@@ -38,7 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     collapsed: {
       width: 80,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         damping: 25,
         stiffness: 300,
         duration: 0.4

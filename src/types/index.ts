@@ -149,11 +149,13 @@ export interface TaskStore {
 
 export interface UIStore {
   sidebarOpen: boolean;
+  sidebarCollapsed: boolean;
   darkMode: boolean;
   currentView: 'all' | 'today' | 'completed' | 'categories' | 'upcoming' | 'category';
   selectedTasks: Set<number>;
   bulkMode: boolean;
   setSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
   setDarkMode: (dark: boolean) => void;
   setCurrentView: (view: 'all' | 'today' | 'completed' | 'categories' | 'upcoming' | 'category') => void;
   toggleTaskSelection: (taskId: number) => void;

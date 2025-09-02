@@ -17,6 +17,8 @@ export const useUIStore = create<UIStore>()(
         activeFilters: {},
 
         setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
+        sidebarCollapsed: false,
+        toggleSidebar: () => set(state => ({ sidebarCollapsed: !state.sidebarCollapsed })),
         setDarkMode: (dark: boolean) => set({ darkMode: dark }),
         setCurrentView: (view: UIStore['currentView']) => set({ currentView: view }),
         toggleTaskSelection: (taskId: number) => set(state => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Modal, Button, Input } from '../ui';
+import { Modal, Button } from '../ui';
 import { useTaskStore } from '../../stores';
 import { CreateTaskInput } from '../../types';
 
