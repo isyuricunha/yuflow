@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Modal, Button, Input } from '../ui';
 import { useTaskStore } from '../../stores';
 import { CreateTaskInput } from '../../types';
@@ -37,61 +38,107 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ isOpen, onClos
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create New Task">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Title"
-          value={formData.title}
-          onChange={(e) => handleChange('title', e.target.value)}
-          placeholder="What needs to be done?"
-          required
-        />
+      <motion.form 
+        onSubmit={handleSubmit} 
+        className="space-y-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
+          <label className="block text-sm font-medium text-white/90 mb-2">
+            Title *
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => handleChange('title', e.target.value)}
+            className="w-full px-4 py-3 glass-input rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-orange/50 focus:border-orange transition-all duration-200"
+            placeholder="Enter task title..."
+            required
+          />
+        </motion.div>
 
-        <div className="space-y-1">
-          <label className="block text-sm font-medium text-white/90">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.25, duration: 0.3 }}
+        >
+          <label className="block text-sm font-medium text-white/90 mb-2">
             Description
           </label>
           <textarea
             value={formData.description}
             onChange={(e) => handleChange('description', e.target.value)}
-            placeholder="Add more details..."
+            className="w-full px-4 py-3 glass-input rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-orange/50 focus:border-orange transition-all duration-200 resize-none"
+            placeholder="Enter task description..."
             rows={3}
-            className="block w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange/80 focus:border-orange/80 transition-colors duration-200"
           />
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-white/90">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+          >
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Priority
             </label>
             <select
               value={formData.priority}
               onChange={(e) => handleChange('priority', e.target.value)}
-              className="block w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange/80 focus:border-orange/80 transition-colors duration-200"
+              className="w-full px-4 py-3 glass-input rounded-xl text-white focus:ring-2 focus:ring-orange/50 focus:border-orange transition-all duration-200"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low" className="bg-black">Low</option>
+              <option value="medium" className="bg-black">Medium</option>
+              <option value="high" className="bg-black">High</option>
             </select>
-          </div>
+          </motion.div>
 
-          <Input
-            label="Due Date"
-            type="date"
-            value={formData.due_date}
-            onChange={(e) => handleChange('due_date', e.target.value)}
-          />
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+          >
+            <label className="block text-sm font-medium text-white/90 mb-2">
+              Due Date
+            </label>
+            <input
+              type="date"
+              value={formData.due_date}
+              onChange={(e) => handleChange('due_date', e.target.value)}
+              className="w-full px-4 py-3 glass-input rounded-xl text-white focus:ring-2 focus:ring-orange/50 focus:border-orange transition-all duration-200"
+            />
+          </motion.div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-4">
-          <Button variant="secondary" onClick={onClose}>
+        <motion.div 
+          className="flex justify-end space-x-3 pt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.3 }}
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onClose}
+          >
             Cancel
           </Button>
-          <Button type="submit" loading={loading}>
+          <Button
+            type="submit"
+            variant="primary"
+            loading={loading}
+          >
             Create Task
           </Button>
-        </div>
-      </form>
+        </motion.div>
+      </motion.form>
     </Modal>
   );
 };

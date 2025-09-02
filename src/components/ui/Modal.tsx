@@ -29,42 +29,68 @@ export const Modal: React.FC<ModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Enhanced Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40"
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed inset-0 bg-black/90 backdrop-blur-md z-40"
             onClick={onClose}
           />
           
           {/* Modal */}
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className={`w-full ${sizeClasses[size]} bg-black border border-white/20 rounded-xl shadow-2xl`}
+              initial={{ opacity: 0, scale: 0.9, y: 32 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1, 
+                y: 0,
+                transition: {
+                  type: "spring",
+                  damping: 25,
+                  stiffness: 300,
+                  duration: 0.4
+                }
+              }}
+              exit={{ 
+                opacity: 0, 
+                scale: 0.95, 
+                y: 20,
+                transition: { duration: 0.2, ease: "easeIn" }
+              }}
+              className={`w-full ${sizeClasses[size]} glass-panel shadow-2xl`}
             >
               {/* Header */}
               {title && (
-                <div className="flex items-center justify-between p-6 border-b border-white/10">
-                  <h2 className="text-xl font-semibold text-white">{title}</h2>
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1, duration: 0.3 }}
+                  className="flex items-center justify-between p-6 border-b border-white/10"
+                >
+                  <h2 className="text-heading text-gradient">{title}</h2>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={onClose}
-                    className="p-1 hover:bg-white/10"
+                    className="p-1 hover:bg-white/10 rounded-lg"
                   >
                     <X className="h-5 w-5" />
                   </Button>
-                </div>
+                </motion.div>
               )}
               
               {/* Content */}
-              <div className="p-6">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+                className="p-6"
+              >
                 {children}
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </>

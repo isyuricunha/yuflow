@@ -95,13 +95,32 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className={`group bg-white/5 border rounded-lg p-4 hover:bg-white/10 transition-colors cursor-pointer ${
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ 
+        opacity: 1, 
+        y: 0, 
+        scale: 1,
+        transition: {
+          type: "spring",
+          damping: 20,
+          stiffness: 300,
+          duration: 0.4
+        }
+      }}
+      exit={{ 
+        opacity: 0, 
+        y: -20, 
+        scale: 0.95,
+        transition: { duration: 0.2, ease: "easeIn" }
+      }}
+      whileHover={{ 
+        y: -2,
+        transition: { duration: 0.2, ease: "easeOut" }
+      }}
+      className={`group surface-interactive rounded-xl p-4 cursor-pointer ${
         task.completed ? 'opacity-60' : ''
       } ${
-        isSelected ? 'border-orange bg-orange/10' : 'border-white/10'
+        isSelected ? 'border-orange bg-orange/10 shadow-lg shadow-orange/20' : ''
       } ${
         bulkMode ? 'hover:border-orange/50' : ''
       }`}
