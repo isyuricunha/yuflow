@@ -239,59 +239,7 @@ export const useTaskStore = create<TaskStore>()(
         set({ tasks: filteredTasks });
       },
 
-      // Advanced filtering
-      applyAdvancedFilters: (filters: TaskFilters) => {
-        set(state => {
-          let filteredTasks = [...state.tasks];
 
-          // Date range filter
-          if (filters.dateRange && filters.dateRange !== 'all') {
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
-            filteredTasks = filteredTasks.filter(task => {
-              if (!task.due_date) return false;
-              const taskDate = new Date(task.due_date);
-              
-              switch (filters.dateRange) {
-                case 'today':
-                  return taskDate >= today && taskDate < new Date(today.getTime() + 24 * 60 * 60 * 1000);
-                case 'week':
-                  const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
-                  const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
-                  return taskDate >= weekStart && taskDate < weekEnd;
-                case 'month':
-                  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-                  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-                  return taskDate >= monthStart && taskDate < monthEnd;
-                default:
-                  return true;
-              }
-            });
-          }
-
-          // Status filter
-          if (filters.status && filters.status !== 'all') {
-            filteredTasks = filteredTasks.filter(task => {
-              if (filters.status === 'pending') return !task.completed;
-              if (filters.status === 'completed') return task.completed;
-              return true;
-            });
-          }
-
-          // Priority filter
-          if (filters.priority) {
-            filteredTasks = filteredTasks.filter(task => task.priority === filters.priority);
-          }
-
-          // Category filter
-          if (filters.category_id) {
-            filteredTasks = filteredTasks.filter(task => task.category_id === filters.category_id);
-          }
-
-          return { tasks: filteredTasks };
-        });
-      },
 
       clearFilters: () => {
         set({ filters: {} });
